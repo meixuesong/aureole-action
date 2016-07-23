@@ -19,7 +19,7 @@ module.exports = function(config) {
     singleRun: true,
     reporters: [ 'mocha' ],
     preprocessors: {
-      'test/loadtests.js': [ 'webpack', 'sourcemap' ]
+      'src/**/*.test.js': [ 'webpack', 'sourcemap' ]
     },
     webpack: webpackCfg,
     webpackServer: {

@@ -1,7 +1,5 @@
-require('normalize.css/normalize.css');
-
 import React from 'react';
-import styles from './App.scss';
+import './App.scss';
 
 class AppComponent extends React.Component {
   render() {
