@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class GuessGame {
 
-    public static final String ERROR_MESSAGE = "The guess number must be 4 digits.";
+    public static final String ERROR_MESSAGE = "The guess number must be 4 different digits.";
     public static final String ERROR_GAME_OVER = "Game over!";
     public static final String GAME_WIN = "You are Winner!";
     private static final String ERROR_THE_GAME_IS_STARTED = "The game is ongoing, you can't start a new game";
@@ -107,7 +107,7 @@ public class GuessGame {
 
     public GameMessage startNew() {
         GameMessage gameMessage = new GameMessage();
-        Integer status = Integer.valueOf(SessionStorage.get("status"));
+        Integer status = SessionStorage.get("status") != null ? Integer.valueOf(SessionStorage.get("status")) : 0;
         gameMessage.setStatusEnum(StatusEnum.valueOf(status));
 
         if(status != 1) {

@@ -4,6 +4,7 @@ package core;
  * Created by lianghuang on 7/20/16.
  */
 public enum StatusEnum{
+    unknown(-1),
     noStart(0),
     playing(1),
     win(2),
@@ -21,6 +22,8 @@ public enum StatusEnum{
 
     public static StatusEnum valueOf(Integer status) {
         switch (status) {
+            case -1:
+                return unknown;
             case 0:
                 return noStart;
             case 1:

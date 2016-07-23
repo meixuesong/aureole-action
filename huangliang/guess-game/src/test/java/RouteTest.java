@@ -16,7 +16,7 @@ public class RouteTest {
     public void shoud_start_a_game() {
         SessionStorage.put("status", "0");
 
-        GameMessage gameMessage = new Route().route(CommandEnum.start, null);
+        GameMessage gameMessage = new Route().route("1");
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(6);
         assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.playing);
@@ -29,7 +29,7 @@ public class RouteTest {
         SessionStorage.put("status", "1");
         SessionStorage.put("answer", "1234");
 
-        GameMessage gameMessage = new Route().route(CommandEnum.guess, null);
+        GameMessage gameMessage = new Route(StatusEnum.playing).route(null);
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(5);
         assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.playing);
@@ -46,7 +46,7 @@ public class RouteTest {
         SessionStorage.put("status", "1");
         SessionStorage.put("answer", "1234");
 
-        GameMessage gameMessage = new Route().route(CommandEnum.guess, "1234");
+        GameMessage gameMessage = new Route(StatusEnum.playing).route("1234");
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(4);
         assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.win);
@@ -61,7 +61,7 @@ public class RouteTest {
         SessionStorage.put("status", "1");
         SessionStorage.put("answer", "1234");
 
-        GameMessage gameMessage = new Route().route(CommandEnum.guess, "1357");
+        GameMessage gameMessage = new Route(StatusEnum.playing).route("1357");
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(0);
         assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.failure);
@@ -78,20 +78,9 @@ public class RouteTest {
         SessionStorage.put("status", "1");
         SessionStorage.put("answer", "1234");
 
-        GameMessage gameMessage = new Route().route(CommandEnum.guess, "1357");
+        GameMessage gameMessage = new Route(StatusEnum.playing).route("1357");
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(3);
-    }
-
-
-    @Test
-    public void shoud_quit_the_game() {
-
-        SessionStorage.put("lifeValue", "1");
-        SessionStorage.put("status", "1");
-        SessionStorage.put("answer", "1234");
-
-        GameMessage gameMessage = new Route().route(CommandEnum.quit, null);
     }
 
 

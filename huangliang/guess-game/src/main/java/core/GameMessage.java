@@ -8,14 +8,7 @@ public class GameMessage {
     private Integer lifeValue;
     private String calculateResult;
     private StatusEnum statusEnum;
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+    private String errorMessage;
 
     public StatusEnum getStatusEnum() {
         return statusEnum;
@@ -41,8 +34,22 @@ public class GameMessage {
         this.lifeValue = lifeValue;
     }
 
-    private String errorMessage;
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public GameMessage() {
+
+    }
+
+    public GameMessage(StatusEnum statusEnum, String errorMessage) {
+        this.statusEnum = statusEnum;
+        this.errorMessage = errorMessage;
+    }
 
 
 }
