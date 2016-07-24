@@ -5,7 +5,9 @@ import java.io.*;
 public class Bootstrap {
 
     public static void main(String[] args) throws IOException {
-        Router router = new Router();
+        Factory factory = new Factory();
+
+        Router router = new Router(factory);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         PrintStream out = new PrintStream(System.out);

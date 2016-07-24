@@ -6,13 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Router {
-    Command command;
+
+    private final Factory factory;
     private Map<String, Command> mapping;
-    {
+
+    Command command;
+
+    public Router(Factory factory) {
+        this.factory = factory;
+
         mapping = new HashMap<String, Command>();
-        mapping.put("1", new ZipToBar());
-        mapping.put("2", new BarToZip());
-        mapping.put("3", new AppExit());
+        mapping.put("1", factory.newZipToBar());
+        mapping.put("2", factory.newBarToZip());
+        mapping.put("3", factory.newAppExit());
     }
 
     public String request(String userInput) {
@@ -21,7 +27,7 @@ public class Router {
         }
 
         if (command == null) {
-            command = new AppUseage();
+            command = factory.newAppUseage();
         }
 
         CommandResult result = command.apply(userInput);

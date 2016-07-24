@@ -5,8 +5,14 @@ import com.tw.barcode.CommandResult;
 
 public class BarToZip implements Command {
 
+    private TranslateBarToZip translateBarToZip;
+
+    public BarToZip(TranslateBarToZip translateBarToZip) {
+        this.translateBarToZip = translateBarToZip;
+    }
+
     @Override
     public CommandResult apply(String zip) {
-        return new TranslateBarToZip().translate(zip);
+        return translateBarToZip.translate(zip);
     }
 }
