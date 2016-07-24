@@ -1,7 +1,6 @@
 package com.tw.barcode.command;
 
-import com.tw.barcode.Command;
-import com.tw.barcode.Router;
+import com.tw.barcode.CommandResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +21,16 @@ public class TranslateZipToBar {
         zipToBars.put('0', "||:::");
     }
 
-    public String translate(String zip) {
+    public CommandResult translate(String zip) {
+        String errorTip = validate(zip);
+        if (errorTip != null) {
+            return new CommandResult(errorTip, false);
+        }
+
         zip = removeHyphon(zip);
         int cd = checkCD(zip);
         zip = addCD(zip, cd);
-        return doTranslate(zip);
+        return new CommandResult(doTranslate(zip), true);
     }
 
     private String doTranslate(String zipStr) {
@@ -52,7 +56,7 @@ public class TranslateZipToBar {
         return zip.replace("-", "");
     }
 
-    public String validate(String userInput) {
+    String validate(String userInput) {
         if(userInput == null) {
             return "null";
         }

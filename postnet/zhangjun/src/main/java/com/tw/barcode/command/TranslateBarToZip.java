@@ -1,5 +1,7 @@
 package com.tw.barcode.command;
 
+import com.tw.barcode.CommandResult;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,14 +20,16 @@ public class TranslateBarToZip {
         barToZips.put("||:::", '0');
     }
 
-    public String translate(String bar) {
+    public CommandResult translate(String bar) {
         String zip = doTranslate(bar);
-        int cd = getCD(zip);
-        if(!checkCD(zip, cd)) {
+        String noCD = zip.substring(0, zip.length() - 1);
+        String cd = zip.substring(zip.length() - 1);
 
+        if(!checkCD(noCD, Integer.parseInt(cd))) {
+            return new CommandResult("error cd", false);
         }
         zip = removeCD(zip);
-        return addHyphon(zip);
+        return new CommandResult(addHyphon(zip), true);
     }
 
     private String removeCD(String zip) {
@@ -49,10 +53,6 @@ public class TranslateBarToZip {
         return bars;
     }
 
-    private int getCD(String zip) {
-        return Integer.parseInt(zip.substring(zip.length() - 1));
-    }
-
     private boolean checkCD(String zipStr, int cd) {
         int sum = 0;
         for (char zip : zipStr.toCharArray()) {
@@ -65,18 +65,18 @@ public class TranslateBarToZip {
         return zip.length() == 9 ? zip.substring(0, 5) + "-" + zip.substring(5) : zip;
     }
 
-    public String validate(String userInput) {
+    String validate(String userInput) {
         if(userInput == null) {
             return "null";
-        }
-
-        if (!userInput.matches("[:|]{32,}")) {
-            return "character error";
         }
 
         int length = userInput.length();
         if(length != 32 && length != 52 && length != 57) {
             return "length error";
+        }
+
+        if (!userInput.matches("[:|]{32,}")) {
+            return "character error";
         }
 
         return null;

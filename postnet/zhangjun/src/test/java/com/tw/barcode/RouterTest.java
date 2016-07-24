@@ -15,7 +15,7 @@ public class RouterTest {
         Router router = new Router();
         String tips = router.request(null);
 
-        assertTrue(router.command instanceof AppUseage);
+        assertNull(router.command);
 
         assertEquals("1 zip to bar\n2 bar to zip\n3 exit", tips);
     }
@@ -26,8 +26,23 @@ public class RouterTest {
         String tips = router.request("1");
 
         assertTrue(router.command instanceof ZipToBar);
-
-        assertEquals("input zip", tips);
     }
 
+    @Test
+    public void should_check_error_input() throws Exception {
+        Router router = new Router();
+        String tips = router.request("123");
+
+        assertEquals("1 zip to bar\n2 bar to zip\n3 exit", tips);
+    }
+
+    @Test
+    public void should_check_input_1_then_input_zip() throws Exception {
+        Router router = new Router();
+        router.request("1");
+        router.request("123");
+
+        assertTrue(router.command instanceof ZipToBar);
+
+    }
 }
