@@ -1,6 +1,17 @@
 import 'core-js/fn/object/assign';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/Main';
+import { Router, Route, browserHistory } from 'react-router';
+import Main from './components/Main';
+import ZipCodeToBarcode from './components/ZipCodeToBarcode';
+import BarcodeToZipCode from './components/BarcodeToZipCode';
 
-ReactDOM.render(<App />, document.getElementById('main'));
+const app = (
+  <Router history={browserHistory}>
+    <Route component={Main} path="/">
+      <Route component={ZipCodeToBarcode} path="zip-code-to-barcode"/>
+      <Route component={BarcodeToZipCode} path="barcode-to-zip-code"/>
+    </Route>
+  </Router>
+);
+ReactDOM.render(app, document.getElementById('main'));
