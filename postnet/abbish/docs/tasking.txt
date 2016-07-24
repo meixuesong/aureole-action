@@ -2,8 +2,6 @@
 [IN]
   Context:
     router: Router
-  Params:
-    routePaths: [String]
 
 #1.1 render
 [IN]
