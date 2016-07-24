@@ -1,3 +1,3 @@
-# aureoleaction
+# Aureole Action
 
-hi I'm Leo.
+Here is the home work repository of Aureole Action.
