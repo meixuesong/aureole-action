@@ -53,8 +53,9 @@
   State:
     zipCode: String
 [TEST]
-    should set state zipCode when input zip code
+    should set input value to state zip code when input zip code
     [12345] -> [12345]
+    should clear state message when input zip code
 
 #2.1.2.1 generateBarcode
 [IN]
@@ -67,10 +68,11 @@
     barcode: String
     message: String
 [TEST]
-    should set state barcode when call function encodeZipCode and return barcode
+    should set generated barcode to state barcode when call encodeZipCode
     [12345] -> [12345]
-    should set state message when call function encodeZipCode and return barcode is empty
+    should set error message to state message when call function encodeZipCode and return value is empty
     [12345] -> [Invalid zip code]
+    should clear state message when generated valid barcode
 
 #2.1.2.1.1 encodeZipCode
 [IN]
