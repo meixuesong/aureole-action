@@ -1,4 +1,5 @@
 import 'core-js/fn/object/assign';
+import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';

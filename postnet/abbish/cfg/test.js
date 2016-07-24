@@ -26,6 +26,10 @@ module.exports = {
         loader: 'null-loader'
       },
       {
+        test: /\.json/,
+        loader: 'json-loader'
+      },
+      {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         include: [].concat(
@@ -48,5 +52,10 @@ module.exports = {
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
     })
-  ]
+  ],
+  externals: {
+    'cheerio': 'window',
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true
+  }
 };
