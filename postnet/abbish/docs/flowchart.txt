@@ -1,0 +1,262 @@
+#1 Main
+[IN]
+  Context:
+    router: Router
+  Params:
+    routePaths: [String]
+
+#1.1 render
+[IN]
+  Props:
+    children: [Component]
+  Component:
+    Link: Component
+[OUT]
+  routePath: String
+  linkText: String
+  render: VDOM
+[TEST]
+  should has link for zip code convert to barcode page
+  should has link for barcode convert to zip code page
+
+#2 ZipCodeToBarcode
+[OUT]
+  State:
+    zipCode: String
+    barcode: String
+    message: String
+[TEST]
+    should defined zipCode state with default value null
+    should defined barcode state with default value null
+    should defined message state with default value null
+
+#2.1 render
+[IN]
+  input: Component
+  button: Component
+[OUT]
+  Callback:
+    takeZipCode: Function
+    generateBarcode: Function
+  render: VDOM
+[TEST]
+  should has input for take user input zip code
+  should has button for trigger barcode generator
+
+#2.1.1.1 takeZipCode
+[IN]
+  Params:
+    zipCode: String
+  Function Call:
+    setState: Function
+[OUT]
+  Params:
+    zipCode: String
+  State:
+    zipCode: String
+[TEST]
+    should set state zipCode when input zip code
+    [12345] -> [12345]
+
+#2.1.2.1 generateBarcode
+[IN]
+  State:
+    zipCode: String
+  Function call:
+    encodeZipCode: String
+[OUT]
+  State:
+    barcode: String
+    message: String
+[TEST]
+    should set state barcode when call function encodeZipCode and return barcode
+    [12345] -> [12345]
+    should set state message when call function encodeZipCode and return barcode is empty
+    [12345] -> [Invalid zip code]
+
+#2.1.2.1.1 encodeZipCode
+[IN]
+  Params:
+    zipCode: String
+[OUT]
+  barcode: String
+[TEST]
+  should return barcode when given zip code
+  [45056-1234] -> [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|]
+
+  #validateZipCode
+  [IN]
+    Params:
+      zipCode: String
+  [OUT]
+    isValid: Boolean
+  [TEST]
+    should return true when given valid zip code
+    [12345] -> [true]
+    [12345-1234] -> [true]
+    [123451234] -> [true]
+    should return false when given invalid zip code
+    [1234] -> [false]
+    [1234567890] -> [false]
+    [1234-56789] -> [false]
+    [12345-678] -> [false]
+
+  #parseZipCode
+    [IN]
+      Params:
+        zipCode: String
+    [OUT]
+      parsedZipCode: String
+    [TEST]
+      should return parsedZipCode when given zip code
+      [12345] -> [12345]
+      [12345-1234] -> [123451234]
+
+
+  #generateZipCodeString
+  [IN]
+    Params:
+      parsedZipCode: String
+  [OUT]
+    zipCodeString: [String]
+  [TEST]
+    should return array contains every word of zip code when given parsed zip code
+    [12345] -> [1,2,3,4,5]
+
+  #generateCheckDigit
+  [IN]
+    Params:
+      zipCodeString: [String]
+  [OUT]
+    checkDigit: String
+  [TEST]
+    should return check digit when given zip code string array
+    [45056-1234] -> [0]
+
+  #encodeZipCodeString
+  [IN]
+    Params:
+      zipCodeString: [String]
+      checkDigit: String
+  [OUT]
+    barcode: String
+  [TEST]
+    should return barcode when given zip code string array and check digit
+    [45056-1234, 0] -> [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|]
+
+
+#3 BarcodeToZipCode
+[OUT]
+  State:
+    barcode: Null
+    zipCode: Null
+    message: Null
+[TEST]
+    should defined barcode state with default value null
+    should defined zipCode state with default value null
+    should defined message state with default value null
+
+#3.1 render
+[IN]
+  input: Component
+  button: Component
+[OUT]
+  Callback:
+    takeBarcode: Function
+    generateZipCode: Function
+  render: VDOM
+[TEST]
+  should has input for take user input barcode
+  should has button for trigger zip code generator
+
+#3.1.1.1 takeBarcode
+[IN]
+  Params:
+    barcode: String
+  Function Call:
+    setState: Function
+[OUT]
+  Params:
+    barcode: String
+  State:
+    barcode: String
+[TEST]
+  should set state barcode when input barcode
+
+
+#3.1.2.1 generateZipCode
+[IN]
+  State:
+    barcode: String
+[OUT]
+  State:
+    zipCode: String
+    message: String
+[TEST]
+  should set state zipCode when call function decodeBarcode and return zipCode
+  should set state message when call function decodeBarcode and return zipCode is empty
+
+
+#3.1.2.1.1 decodeBarcode
+[IN]
+  Params:
+    barcode: String
+[OUT]
+  zipCode: String
+[TEST]
+  should return zipCode when given barcode
+  [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|] -> [45056-1234]
+
+  #validateBarcode
+  [IN]
+    barcode: String
+  [OUT]
+    isValid: Boolean
+  [TEST]
+    should return true when given valid barcode
+    [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|] -> [true]
+    should return false when given invalid barcode
+    [:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::] -> [false]
+    [|:|::|:||::::|:|::||:::::||::|:|::||::|::|||:::|] -> [false]
+
+  #generateBarcodeString
+  [IN]
+    Params:
+      barcode: String
+  [OUT]
+    barcodeString: [String]
+  [TEST]
+    should return array contains every word of barcode when given barcode
+    [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|] -> [:|::|, :|:|:, ||:::, :|:|:, :||::, :::||, ::|:|, ::||:, :|::|, ||:::]
+
+  #decodeBarcodeString
+  [IN]
+    Params:
+      barcodeString: [String]
+  [OUT]
+    zipCodeString: [String]
+  [TEST]
+    should return array contains every word of zip code decoded from barcode when given barcode
+    [:|::|, :|:|:, ||:::, :|:|:, :||::, :::||, ::|:|, ::||:, :|::|, ||:::] -> [4,5,0,5,6,1,2,3,4,0]
+
+  #validateCheckDigit
+  [IN]
+    zipCodeString: [String]
+  [OUT]
+    isValid: Boolean
+  [TEST]
+    should return true when given valid zip code string
+    [1,2,3,4,5,5] -> [true]
+    should return false when given invalid zip code string
+    [1,2,3,4,5,0] -> [false]
+
+  #formatZipCode
+  [IN]
+    zipCodeString: [String]
+  [OUT]
+    zipCode: String
+  [TEST]
+    should return formatted zip code when given zip code string
+    [1,2,3,4,5,0] -> [12345]
+    [1,2,3,4,5,6,7,8,9,5] -> [12345-6789]
+
