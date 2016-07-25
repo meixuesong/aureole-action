@@ -87,7 +87,7 @@ describe('ZipCodeToBarcode component', () => {
     });
   });
 
-  describe('takeZipCode', () => {
+  describe('takeBarcode', () => {
     it('should set input value to state zip code when input zip code', () => {
       const component = setup();
       const input = component.find('input').filterWhere(i => i.prop('placeholder') === 'Zip Code');

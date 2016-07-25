@@ -6,9 +6,9 @@ class Main extends React.Component {
     return (
       <div className="main">
         <div className="main__menu">
-          <Link to="zip-code-to-barcode">Zip Code To Barcode</Link>
+          <Link to="zip-code-to-barcode">1. Zip Code To Barcode</Link>
           &nbsp;
-          <Link to="barcode-to-zip-code">Barcode To Zip Code</Link>
+          <Link to="barcode-to-zip-code">2. Barcode To Zip Code</Link>
         </div>
         <div className="main__container">
           {this.props.children}

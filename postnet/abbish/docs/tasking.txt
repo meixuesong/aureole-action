@@ -10,11 +10,9 @@
   Component:
     Link: Component
 [OUT]
-  routePath: String
-  linkText: String
   render: VDOM
 [TEST]
-  should has link for zip code convert to barcode page
+  should has link for goto zip code convert to barcode page
   should has link for barcode convert to zip code page
 
 #2 ZipCodeToBarcode
@@ -178,7 +176,8 @@
   State:
     barcode: String
 [TEST]
-  should set state barcode when input barcode
+  should set input value to state barcode when input barcode
+  should clear state message and zip code when input barcode
 
 
 #3.1.2.1 generateZipCode
@@ -190,8 +189,9 @@
     zipCode: String
     message: String
 [TEST]
-  should set state zipCode when call function decodeBarcode and return zipCode
-  should set state message when call function decodeBarcode and return zipCode is empty
+  should set generated zip code to state zipCode when call decodeBarcode
+  should set error message to state message when call function decodeBarcode and return value is empty
+  should clear state message when generated valid zip code
 
 
 #3.1.2.1.1 decodeBarcode
