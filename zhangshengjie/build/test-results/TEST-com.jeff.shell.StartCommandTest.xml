@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.jeff.shell.StartCommandTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-07-17T07:21:12" hostname="jeff.local" time="0.003">
+  <properties/>
+  <testcase name="invoke" classname="com.jeff.shell.StartCommandTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
