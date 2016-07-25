@@ -1,11 +1,9 @@
 #####Change Log
 
-###2016-7-23
-1.完整功能基于tdd实现
+### [2016-7-23] V1.0 release
+1.完整功能基于tdd实现,Core与Shell使用tdd开发, Main方法未写测试
 
-
-
-###重构与优化Task
+### 重构与优化未完成Task
 
 1. Session Config 不使用 Ｍap, 在main中注入
 2. Core package中类的拆分
