@@ -54,6 +54,37 @@ describe('ZipCodeToBarcode component', () => {
       assert.equal(button.length, 1);
       assert.equal(button.prop('onClick').name, 'generateBarcode');
     });
+
+    it('should display message when state message is not empty', () => {
+      const component = setup();
+      component.setState({
+        message: 'test message'
+      });
+
+      const span = component.find('span').filterWhere(s => s.prop('children') === 'test message');
+      assert.equal(span.length, 1);
+    });
+
+    it('should display barcode when state barcode is not empty', () => {
+      const component = setup();
+      component.setState({
+        barcode: 'barcode'
+      });
+
+      const span = component.find('span').filterWhere(s => s.prop('children') === 'barcode');
+      assert.equal(span.length, 1);
+    });
+
+    it('should not display barcode when state message is not empty', () => {
+      const component = setup();
+      component.setState({
+        barcode: 'barcode',
+        message: 'test'
+      });
+
+      const span = component.find('span').filterWhere(s => s.prop('children') === 'test');
+      assert.equal(span.length, 1);
+    });
   });
 
   describe('takeZipCode', () => {
@@ -61,24 +92,47 @@ describe('ZipCodeToBarcode component', () => {
       const component = setup();
       const input = component.find('input').filterWhere(i => i.prop('placeholder') === 'Zip Code');
 
-      input.prop('onChange')('12345');
+      input.prop('onChange')({
+        target: {
+          value: '12345'
+        }
+      });
 
       assert.equal(component.state('zipCode'), '12345');
     });
 
-    it('should clear state message when input zip code', () => {
+    it('should set input value as string when input zip code type is number', () => {
+      const component = setup();
+      const input = component.find('input').filterWhere(i => i.prop('placeholder') === 'Zip Code');
+
+      input.prop('onChange')({
+        target: {
+          value: 12345
+        }
+      });
+
+      assert.equal(typeof component.state('zipCode'), 'number');
+    });
+
+    it('should clear state message and barcode when input zip code', () => {
       const component = setup();
       const input = component.find('input').filterWhere(i => i.prop('placeholder') === 'Zip Code');
 
       component.setState({
-        message: 'test'
+        message: 'test',
+        barcode: 'barcode'
       });
 
       assert.equal(component.state('message'), 'test');
 
-      input.prop('onChange')('12345');
+      input.prop('onChange')({
+        target: {
+          value: '12345'
+        }
+      });
 
       assert.equal(component.state('message'), null);
+      assert.equal(component.state('barcode'), null);
     });
   });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import zipCodeToBarcodeCore from '../libs/zip-code-to-barcode';
+import * as zipCodeToBarcodeCore from '../libs/zip-code-to-barcode';
 
 class ZipCodeToBarcode extends React.Component {
 
@@ -18,10 +18,11 @@ class ZipCodeToBarcode extends React.Component {
     this.generateBarcode = this.generateBarcode.bind(this);
   }
 
-  takeZipCode(value) {
+  takeZipCode(event) {
     this.setState({
-      zipCode: value,
-      message: null
+      zipCode: event.target.value,
+      message: null,
+      barcode: null
     });
   }
 
@@ -37,14 +38,18 @@ class ZipCodeToBarcode extends React.Component {
   render() {
     return (
       <div className="zip-code-to-barcode">
-        <input type="text" placeholder="Zip Code" onChange={this.takeZipCode} />
-        <button onClick={this.generateBarcode}>Generate Barcode</button>
+        <p>
+          <input type="text" placeholder="Zip Code" onChange={this.takeZipCode}/>
+          <button onClick={this.generateBarcode}>Generate Barcode</button>
+        </p>
+        <p>
+          <span>{this.state.message ? this.state.message : this.state.barcode}</span>
+        </p>
       </div>
     );
   }
 }
 
-ZipCodeToBarcode.defaultProps = {
-};
+ZipCodeToBarcode.defaultProps = {};
 
 export default ZipCodeToBarcode;

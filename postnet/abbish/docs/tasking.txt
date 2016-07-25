@@ -30,8 +30,12 @@
 
 #2.1 render
 [IN]
-  input: Component
-  button: Component
+  Component:
+    input: Component
+    button: Component
+  State:
+    barcode: String
+    message: String
 [OUT]
   Callback:
     takeZipCode: Function
@@ -40,6 +44,9 @@
 [TEST]
   should has input for take user input zip code
   should has button for trigger barcode generator
+  should display message when state message is not empty
+  should display barcode when state barcode is not empty
+  should not display barcode when state message is not empty
 
 #2.1.1.1 takeZipCode
 [IN]
@@ -56,6 +63,7 @@
     should set input value to state zip code when input zip code
     [12345] -> [12345]
     should clear state message when input zip code
+    should set input value as string when input zip code type is number
 
 #2.1.2.1 generateBarcode
 [IN]
@@ -112,37 +120,26 @@
       [12345] -> [12345]
       [12345-1234] -> [123451234]
 
-
-  #generateZipCodeString
-  [IN]
-    Params:
-      parsedZipCode: String
-  [OUT]
-    zipCodeString: [String]
-  [TEST]
-    should return array contains every word of zip code when given parsed zip code
-    [12345] -> [1,2,3,4,5]
-
   #generateCheckDigit
   [IN]
     Params:
-      zipCodeString: [String]
+      parsedZipCode: [String]
   [OUT]
     checkDigit: String
   [TEST]
-    should return check digit when given zip code string array
+    should return check digit when given parsed zip code
     [45056-1234] -> [0]
 
   #encodeZipCodeString
   [IN]
     Params:
-      zipCodeString: [String]
+      parsedZipCode: [String]
       checkDigit: String
   [OUT]
     barcode: String
   [TEST]
-    should return barcode when given zip code string array and check digit
-    [45056-1234, 0] -> [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|]
+    should return barcode when given parsed zip code and check digit
+    [450561234, 0] -> [|:|::|:|:|:||::::|:|::||:::::||::|:|::||::|::|||:::|]
 
 
 #3 BarcodeToZipCode

@@ -7,6 +7,7 @@ class Main extends React.Component {
       <div className="main">
         <div className="main__menu">
           <Link to="zip-code-to-barcode">Zip Code To Barcode</Link>
+          &nbsp;
           <Link to="barcode-to-zip-code">Barcode To Zip Code</Link>
         </div>
         <div className="main__container">
