@@ -9,18 +9,16 @@ import core.StatusEnum;
 public class Route {
 
     private StatusEnum gameStatus;
+    private CommandInvoke commandInvoke;
 
-    public Route(){
+    public Route(CommandInvoke commandInvoke){
+        this.commandInvoke = commandInvoke;
         gameStatus = StatusEnum.noStart;
     }
 
-    public Route(StatusEnum statusEnum){
-        gameStatus = statusEnum;
-    }
+
 
     public GameMessage route(String guessValue) {
-
-        CommandInvoke commandInvoke = new CommandInvoke();
 
         CommandEnum commandEnum = parseCommand(guessValue);
         if(commandEnum == CommandEnum.unknown) {

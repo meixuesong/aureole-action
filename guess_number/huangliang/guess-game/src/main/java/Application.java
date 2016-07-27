@@ -1,4 +1,7 @@
+import core.RandomNumberGenerator;
 import core.GameMessage;
+import core.GuessGame;
+import shell.CommandInvoke;
 import shell.Route;
 import java.util.Scanner;
 
@@ -9,7 +12,8 @@ public class Application {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        Route route = new Route();
+        CommandInvoke commandInvoke = new CommandInvoke(new GuessGame(new RandomNumberGenerator()));
+        Route route = new Route(commandInvoke);
 
         showMenu();
 

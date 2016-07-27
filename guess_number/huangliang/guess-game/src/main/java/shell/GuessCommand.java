@@ -6,8 +6,13 @@ import core.GuessGame;
 /**
  * Created by lianghuang on 7/20/16.
  */
-public class GuessCommand implements Command {
+public class GuessCommand extends Command {
+
+    public GuessCommand(GuessGame guessGame) {
+        super(guessGame);
+    }
+
     public GameMessage execute(String parameters) {
-        return new GuessGame().calculate(parameters);
+        return guessGame.calculate(parameters);
     }
 }

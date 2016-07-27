@@ -3,7 +3,6 @@ package core;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -16,38 +15,36 @@ public class GuessGame {
     public static final String ERROR_GAME_OVER = "Game over!";
     public static final String GAME_WIN = "You are Winner!";
     private static final String ERROR_THE_GAME_IS_STARTED = "The game is ongoing, you can't start a new game";
+    private final RandomNumberGenerator randomNumberGenerator;
 
+    private Integer lifeValue;
+    private StatusEnum status;
+    private String answer;
+
+    public GuessGame(RandomNumberGenerator randomNumberGenerator) {
+        this.randomNumberGenerator = randomNumberGenerator;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public Integer getLifeValue() {
+        return lifeValue;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
 
     public void initialize() {
 
-        SessionStorage.put("lifeValue", "6");
-        SessionStorage.put("status", "1");
-        SessionStorage.put("answer", null);
-    }
-
-    public String generateAnswer() {
-        Map<String,Boolean> map = new HashMap<String, Boolean>();
-        String result = "";
-
-        while(true) {
-            String current = String.valueOf(Math.abs(new Random().nextInt()) % 10);
-            if(!map.containsKey(current)){
-                map.put(current,true);
-                result += current;
-            }
-
-            if(result.length() >= 4) {
-                break;
-            }
-        }
-
-        SessionStorage.put("answer", result);
-
-        return result;
+        lifeValue = 6;
+        status = StatusEnum.playing;
+        answer = randomNumberGenerator.generateAnswer();
     }
 
     public String match(String guessValue) {
-        String answer = SessionStorage.get("answer");
         Map<Character,Boolean> answerMap = new HashMap<Character, Boolean>();
         for (Character c: answer.toCharArray()) {
             answerMap.put(c, true);
@@ -88,7 +85,6 @@ public class GuessGame {
             }
         }
 
-
         return result;
     }
 
@@ -98,25 +94,20 @@ public class GuessGame {
     }
 
     public Integer reduceLifeValue() {
-        Integer lifeValue = Integer.valueOf(SessionStorage.get("lifeValue"));
-        lifeValue = lifeValue > 0 ? --lifeValue : 0;
-        SessionStorage.put("lifeValue", String.valueOf(lifeValue));
 
-        return lifeValue;
+        return lifeValue > 0 ? --lifeValue : 0;
     }
 
     public GameMessage startNew() {
         GameMessage gameMessage = new GameMessage();
-        Integer status = SessionStorage.get("status") != null ? Integer.valueOf(SessionStorage.get("status")) : 0;
-        gameMessage.setStatusEnum(StatusEnum.valueOf(status));
+        gameMessage.setStatusEnum(status);
 
-        if(status != 1) {
+        if(status != StatusEnum.playing) {
             initialize();
-            generateAnswer();
             gameMessage.setStatusEnum(StatusEnum.playing);
-            gameMessage.setLifeValue(Integer.valueOf(SessionStorage.get("lifeValue")));
+            gameMessage.setLifeValue(lifeValue);
         } else {
-            gameMessage.setLifeValue(Integer.valueOf(SessionStorage.get("lifeValue")));
+            gameMessage.setLifeValue(lifeValue);
             gameMessage.setErrorMessage(ERROR_THE_GAME_IS_STARTED);
         }
 
@@ -127,19 +118,19 @@ public class GuessGame {
         GameMessage gameMessage = new GameMessage();
         gameMessage.setErrorMessage(validate(guessValue));
         gameMessage.setStatusEnum(StatusEnum.playing);
-        gameMessage.setLifeValue(Integer.valueOf(SessionStorage.get("lifeValue")));
+        gameMessage.setLifeValue(lifeValue);
 
         if(gameMessage.getErrorMessage() == null) {
             gameMessage.setCalculateResult(match(guessValue));
             gameMessage.setLifeValue(reduceLifeValue());
             if(gameMessage.getCalculateResult().equals("4A0B")) {
                 gameMessage.setStatusEnum(StatusEnum.win);
-                SessionStorage.put("status", StatusEnum.win.getValue().toString());
+                status = StatusEnum.win;
                 gameMessage.setErrorMessage(GAME_WIN);
             }
             else if(gameMessage.getLifeValue() == 0) {
                 gameMessage.setStatusEnum(StatusEnum.failure);
-                SessionStorage.put("status", StatusEnum.failure.getValue().toString());
+                status = StatusEnum.failure;
                 gameMessage.setErrorMessage(ERROR_GAME_OVER);
             }
 

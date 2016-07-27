@@ -1,14 +1,17 @@
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import core.GameMessage;
+import core.RandomNumberGenerator;
 import core.GuessGame;
-import core.SessionStorage;
 import core.StatusEnum;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by lianghuang on 7/17/16.
@@ -17,188 +20,208 @@ public class GuessGameTest {
 
     @Test
     public void should_be_initialized(){
-        SessionStorage.put("lifeValue", "3");
-        SessionStorage.put("status", "2");
-        SessionStorage.put("answer", "1234");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
 
-        new GuessGame().initialize();
-
-        assertThat(SessionStorage.get("lifeValue")).isEqualTo("6");
-        assertThat(SessionStorage.get("status")).isEqualTo("1");
-        assertThat(SessionStorage.get("answer")).isEqualTo(null);
+        assertThat(guessGame.getLifeValue()).isEqualTo(6);
+        assertThat(guessGame.getStatus()).isEqualTo(StatusEnum.playing);
     }
 
 
     @Test
     public void should_generate_new_4_length_answer(){
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
 
-        String answer = new GuessGame().generateAnswer();
-
-        assertThat(answer.length()).isEqualTo(4);
+        assertThat(guessGame.getAnswer().length()).isEqualTo(4);
     }
 
 
     @Test
     public void should_generate_new_number_answer(){
 
-        String answer = new GuessGame().generateAnswer();
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
 
-        assertThat(isInteger(answer));
+        assertThat(isInteger(guessGame.getAnswer()));
     }
 
     @Test
     public void should_generate_4_different_number_answer(){
 
-        String answer = new GuessGame().generateAnswer();
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
 
-        assertThat(isNotRepeat(answer));
-        assertThat(isInteger(answer));
+        assertThat(isNotRepeat(guessGame.getAnswer()));
+        assertThat(isInteger(guessGame.getAnswer()));
     }
 
     @Test
     public void should_return_1A1B_when_match_1234_answer_is_1357() {
-        SessionStorage.put("answer", "1357");
-        String tips = new GuessGame().match("1234");
+
+        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
+        when(randomNumberGenerator.generateAnswer()).thenReturn("1357");
+        GuessGame guessGame = new GuessGame(randomNumberGenerator);
+        guessGame.initialize();
+
+        String tips = guessGame.match("1234");
         assertThat(tips).isEqualTo("1A1B");
     }
 
 
     @Test
     public void should_return_4A0B_when_match_1357_answer_is_1357() {
-        SessionStorage.put("answer", "1357");
-        String tips = new GuessGame().match("1357");
+        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
+        when(randomNumberGenerator.generateAnswer()).thenReturn("1357");
+        GuessGame guessGame = new GuessGame(randomNumberGenerator);
+        guessGame.initialize();
+
+        String tips = guessGame.match("1357");
         assertThat(tips).isEqualTo("4A0B");
     }
 
     @Test
     public void should_return_0A0B_when_match_2468_answer_is_1357() {
-        SessionStorage.put("answer", "1357");
-        String tips = new GuessGame().match("2468");
+        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
+        when(randomNumberGenerator.generateAnswer()).thenReturn("1357");
+        GuessGame guessGame = new GuessGame(randomNumberGenerator);
+        guessGame.initialize();
+
+        String tips = guessGame.match("2468");
         assertThat(tips).isEqualTo("0A0B");
     }
 
 
     @Test
     public void should_return_null_when_validate_1234() {
-        String errorMessage = new GuessGame().validate("1234");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+
+        String errorMessage = guessGame.validate("1234");
         assertThat(errorMessage == null);
     }
 
 
     @Test
     public void should_return_error_message_when_validate_abcd() {
-        String errorMessage = new GuessGame().validate("abcd");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        String errorMessage = guessGame.validate("abcd");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
     @Test
     public void should_return_error_message_when_validate_abc() {
-        String errorMessage = new GuessGame().validate("abc");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        String errorMessage = guessGame.validate("abc");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
 
     @Test
     public void should_return_error_message_when_validate_1() {
-        String errorMessage = new GuessGame().validate("1");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        String errorMessage = guessGame.validate("1");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
 
     @Test
     public void should_return_error_message_when_validate_null() {
-        String errorMessage = new GuessGame().validate(null);
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        String errorMessage = guessGame.validate(null);
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
     @Test
     public void should_return_error_message_when_validate_1123() {
-        String errorMessage = new GuessGame().validate("1123");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        String errorMessage = guessGame.validate("1123");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
     @Test
     public void should_reduce_the_life_value_when_the_value_is_6() {
-        SessionStorage.put("lifeValue","6");
-        Integer lifeValue = new GuessGame().reduceLifeValue();
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
+        Integer lifeValue = guessGame.reduceLifeValue();
         assertThat(lifeValue).isEqualTo(5);
     }
 
     @Test
-    public void should_reduce_the_life_value_when_the_value_is_0() {
-        SessionStorage.put("lifeValue","0");
-        Integer lifeValue = new GuessGame().reduceLifeValue();
+    public void should_reduce_the_life_value_when_the_value_is_0() throws NoSuchFieldException, IllegalAccessException {
+
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+
+        setPrivateFieldValue(guessGame, "lifeValue", 0);
+
+        Integer lifeValue = guessGame.reduceLifeValue();
         assertThat(lifeValue).isEqualTo(0);
     }
 
     @Test
     public void should_start_a_new_game() {
-        SessionStorage.put("status", "0");
 
-        new GuessGame().startNew();
-        Integer lifeValue = Integer.valueOf(SessionStorage.get("lifeValue"));
-        String status = SessionStorage.get("status");
-        String answer = SessionStorage.get("answer");
-        assertThat(lifeValue).isEqualTo(6);
-        assertThat(status).isEqualTo("1");
-        assertThat(answer.length()).isEqualTo(4);
-        assertThat(isInteger(answer));
-        assertThat(isNotRepeat(answer));
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.startNew();
 
-
+        assertThat(guessGame.getLifeValue()).isEqualTo(6);
+        assertThat(guessGame.getStatus()).isEqualTo(StatusEnum.playing);
+        assertThat(guessGame.getAnswer().length()).isEqualTo(4);
+        assertThat(isInteger(guessGame.getAnswer()));
+        assertThat(isNotRepeat(guessGame.getAnswer()));
     }
 
     @Test
     public void should_keep_a_ongoing_game() {
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
+        setPrivateFieldValue(guessGame, "lifeValue", 4);
+        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
+        setPrivateFieldValue(guessGame, "answer", "1234");
 
-        SessionStorage.put("lifeValue", "4");
-        SessionStorage.put("status", "1");
-        SessionStorage.put("answer", "1234");
+        guessGame.startNew();
 
-        new GuessGame().startNew();
-
-        Integer lifeValue = Integer.valueOf(SessionStorage.get("lifeValue"));
-        String status = SessionStorage.get("status");
-        String answer = SessionStorage.get("answer");
-        assertThat(lifeValue).isEqualTo(4);
-        assertThat(status).isEqualTo("1");
-        assertThat(answer.length()).isEqualTo(4);
-        assertThat(isInteger(answer));
-        assertThat(isNotRepeat(answer));
-        assertThat(answer).isEqualTo("1234");
+        assertThat(guessGame.getLifeValue()).isEqualTo(4);
+        assertThat(guessGame.getStatus()).isEqualTo(StatusEnum.playing);
+        assertThat(guessGame.getAnswer()).isEqualTo("1234");
     }
 
     @Test
     public void should_return_error_info() {
-        SessionStorage.put("status", "0");
-        new GuessGame().startNew();
-        GameMessage gameMessage = new GuessGame().calculate("1A23");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.startNew();
+
+        GameMessage gameMessage = guessGame.calculate("1A23");
 
         assertThat(gameMessage.getErrorMessage()).isEqualTo(GuessGame.ERROR_MESSAGE);
-
     }
 
     @Test
     public void should_return_normal_status() {
-        SessionStorage.put("lifeValue", "6");
-        SessionStorage.put("status", "1");
-        SessionStorage.put("answer", "1234");
 
-        GameMessage gameMessage = new GuessGame().calculate("1357");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
+        setPrivateFieldValue(guessGame, "lifeValue", 6);
+        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
+        setPrivateFieldValue(guessGame, "answer", "1234");
+
+        GameMessage gameMessage = guessGame.calculate("1357");
+
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(5);
-        assertThat(gameMessage.getStatusEnum().getValue()).isEqualTo(1);
+        assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.playing);
         assertThat(gameMessage.getCalculateResult()).isEqualTo("1A1B");
 
     }
 
     @Test
     public void should_return_failure_status() {
-        SessionStorage.put("lifeValue", "1");
-        SessionStorage.put("status", "1");
-        SessionStorage.put("answer", "1234");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
+        setPrivateFieldValue(guessGame, "lifeValue", 1);
+        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
+        setPrivateFieldValue(guessGame, "answer", "1234");
 
-        GameMessage gameMessage = new GuessGame().calculate("1357");
+        GameMessage gameMessage = guessGame.calculate("1357");
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(0);
         assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.failure);
@@ -209,11 +232,13 @@ public class GuessGameTest {
 
     @Test
     public void should_return_success_status() {
-        SessionStorage.put("lifeValue", "1");
-        SessionStorage.put("status", "1");
-        SessionStorage.put("answer", "1234");
+        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        guessGame.initialize();
+        setPrivateFieldValue(guessGame, "lifeValue", 1);
+        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
+        setPrivateFieldValue(guessGame, "answer", "1234");
 
-        GameMessage gameMessage = new GuessGame().calculate("1234");
+        GameMessage gameMessage = guessGame.calculate("1234");
 
         assertThat(gameMessage.getLifeValue()).isEqualTo(0);
         assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.win);
@@ -223,6 +248,20 @@ public class GuessGameTest {
     }
 
 
+    private void setPrivateFieldValue(GuessGame guessGame, String fieldName, Object value) {
+        Field privateField = null;
+        try {
+            privateField = GuessGame.class.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        privateField.setAccessible(true);
+        try {
+            privateField.set(guessGame, value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
     private boolean isInteger(String str) {
         Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
