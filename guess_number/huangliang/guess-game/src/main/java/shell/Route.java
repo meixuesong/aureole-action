@@ -38,13 +38,13 @@ public class Route {
             case win:
             case failure:
                 if(guessValue.equals("1")) {
-                    command = commandInvoke.invoke(StartCommand.CommandName);
+                    command = commandInvoke.getStartCommand();
                 } else if(guessValue.equals("2")) {
-                    command = commandInvoke.invoke(QuitCommand.CommandName);
+                    command = commandInvoke.getQuitCommand();
                 }
                 break;
             case playing:
-                command = commandInvoke.invoke(GuessCommand.CommandName);
+                command = commandInvoke.getGuessCommand();
                 break;
 
         }
