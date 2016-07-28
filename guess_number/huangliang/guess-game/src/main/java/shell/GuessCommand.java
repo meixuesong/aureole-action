@@ -8,6 +8,8 @@ import core.GuessGame;
  */
 public class GuessCommand extends Command {
 
+    public final static String CommandName = "guess";
+
     public GuessCommand(GuessGame guessGame) {
         super(guessGame);
     }

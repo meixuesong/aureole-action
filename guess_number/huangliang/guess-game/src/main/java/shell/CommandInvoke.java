@@ -11,17 +11,17 @@ import java.util.Map;
  */
 public class CommandInvoke {
 
-    private Map<CommandEnum, Command> commands;
+    private Map<String, Command> commands;
 
     public CommandInvoke(GuessGame guessGame) {
-        commands = new HashMap<CommandEnum, Command>();
-        commands.put(CommandEnum.start, new StartCommand(guessGame));
-        commands.put(CommandEnum.guess, new GuessCommand(guessGame));
-        commands.put(CommandEnum.quit, new QuitCommand(guessGame));
+        commands = new HashMap<String, Command>();
+        commands.put(StartCommand.CommandName, new StartCommand(guessGame));
+        commands.put(GuessCommand.CommandName, new GuessCommand(guessGame));
+        commands.put(QuitCommand.CommandName, new QuitCommand(guessGame));
     }
 
-    public Command invoke(CommandEnum commandEnum) {
+    public Command invoke(String commandName) {
 
-        return commands.get(commandEnum);
+        return commands.get(commandName);
     }
 }

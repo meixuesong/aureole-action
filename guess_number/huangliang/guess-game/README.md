@@ -1,5 +1,9 @@
 #Change Log
 
+## [2016-7-28] V1.2 release
+#####1. 抽像出GuessGameContext类，使用Mock重构testcase
+#####2. Delete CommandEnum
+
 ## [2016-7-27] V1.1 release
 #####1. Command模式重构
 #####2. 重构部分类

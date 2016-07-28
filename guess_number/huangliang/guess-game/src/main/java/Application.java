@@ -1,3 +1,4 @@
+import core.GuessGameContext;
 import core.RandomNumberGenerator;
 import core.GameMessage;
 import core.GuessGame;
@@ -12,8 +13,9 @@ public class Application {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        CommandInvoke commandInvoke = new CommandInvoke(new GuessGame(new RandomNumberGenerator()));
-        Route route = new Route(commandInvoke);
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
+        Route route = new Route(guessGame, commandInvoke);
 
         showMenu();
 

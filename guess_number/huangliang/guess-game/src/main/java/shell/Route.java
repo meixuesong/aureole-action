@@ -1,6 +1,7 @@
 package shell;
 
 import core.GameMessage;
+import core.GuessGame;
 import core.StatusEnum;
 
 /**
@@ -8,50 +9,46 @@ import core.StatusEnum;
  */
 public class Route {
 
-    private StatusEnum gameStatus;
+    private GuessGame guessGame;
     private CommandInvoke commandInvoke;
 
-    public Route(CommandInvoke commandInvoke){
+    public Route(GuessGame guessGame, CommandInvoke commandInvoke){
         this.commandInvoke = commandInvoke;
-        gameStatus = StatusEnum.noStart;
+        this.guessGame = guessGame;
     }
-
-
 
     public GameMessage route(String guessValue) {
 
-        CommandEnum commandEnum = parseCommand(guessValue);
-        if(commandEnum == CommandEnum.unknown) {
+        Command command = parseCommand(guessValue);
+        if(command == null) {
             return  new GameMessage(StatusEnum.unknown,"The parameter can't be parsed! Please check and input again.");
         }
 
-        Command command = commandInvoke.invoke(commandEnum);
         GameMessage gameMessage = command.execute(guessValue);
-        gameStatus = gameMessage.getStatusEnum();
 
         return gameMessage;
     }
 
-    private CommandEnum parseCommand(String guessValue) {
+    private Command parseCommand(String guessValue) {
 
-        switch (gameStatus) {
+        Command command = null;
+
+        switch (guessGame.getGuessGameContext().getStatus()) {
             case noStart:
             case win:
             case failure:
-                if(guessValue == null) {
-                    return CommandEnum.unknown;
-                }
                 if(guessValue.equals("1")) {
-                    return CommandEnum.start;
+                    command = commandInvoke.invoke(StartCommand.CommandName);
                 } else if(guessValue.equals("2")) {
-                    return CommandEnum.quit;
-                } else {
-                    return CommandEnum.unknown;
+                    command = commandInvoke.invoke(QuitCommand.CommandName);
                 }
+                break;
             case playing:
-                return CommandEnum.guess;
-            default:
-                return CommandEnum.unknown;
+                command = commandInvoke.invoke(GuessCommand.CommandName);
+                break;
+
         }
+
+        return command;
     }
 }

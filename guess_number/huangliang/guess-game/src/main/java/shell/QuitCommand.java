@@ -10,6 +10,8 @@ import core.GuessGame;
  */
 public class QuitCommand extends Command {
 
+    public final static String CommandName = "quit";
+
     public QuitCommand(GuessGame guessGame) {
         super(guessGame);
     }

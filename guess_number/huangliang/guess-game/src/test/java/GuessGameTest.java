@@ -1,6 +1,7 @@
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import core.GameMessage;
+import core.GuessGameContext;
 import core.RandomNumberGenerator;
 import core.GuessGame;
 import core.StatusEnum;
@@ -20,40 +21,40 @@ public class GuessGameTest {
 
     @Test
     public void should_be_initialized(){
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        guessGame.startNew();
 
-        assertThat(guessGame.getLifeValue()).isEqualTo(6);
-        assertThat(guessGame.getStatus()).isEqualTo(StatusEnum.playing);
+        assertThat(guessGame.getGuessGameContext().getLifeValue()).isEqualTo(6);
+        assertThat(guessGame.getGuessGameContext().getStatus()).isEqualTo(StatusEnum.playing);
     }
 
 
     @Test
     public void should_generate_new_4_length_answer(){
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        guessGame.startNew();
 
-        assertThat(guessGame.getAnswer().length()).isEqualTo(4);
+        assertThat(guessGame.getGuessGameContext().getAnswer().length()).isEqualTo(4);
     }
 
 
     @Test
     public void should_generate_new_number_answer(){
 
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        guessGame.startNew();
 
-        assertThat(isInteger(guessGame.getAnswer()));
+        assertThat(isInteger(guessGame.getGuessGameContext().getAnswer()));
     }
 
     @Test
     public void should_generate_4_different_number_answer(){
 
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        guessGame.startNew();
 
-        assertThat(isNotRepeat(guessGame.getAnswer()));
-        assertThat(isInteger(guessGame.getAnswer()));
+        assertThat(isNotRepeat(guessGame.getGuessGameContext().getAnswer()));
+        assertThat(isInteger(guessGame.getGuessGameContext().getAnswer()));
     }
 
     @Test
@@ -61,8 +62,8 @@ public class GuessGameTest {
 
         RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
         when(randomNumberGenerator.generateAnswer()).thenReturn("1357");
-        GuessGame guessGame = new GuessGame(randomNumberGenerator);
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), randomNumberGenerator);
+        guessGame.startNew();
 
         String tips = guessGame.match("1234");
         assertThat(tips).isEqualTo("1A1B");
@@ -73,8 +74,8 @@ public class GuessGameTest {
     public void should_return_4A0B_when_match_1357_answer_is_1357() {
         RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
         when(randomNumberGenerator.generateAnswer()).thenReturn("1357");
-        GuessGame guessGame = new GuessGame(randomNumberGenerator);
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), randomNumberGenerator);
+        guessGame.startNew();
 
         String tips = guessGame.match("1357");
         assertThat(tips).isEqualTo("4A0B");
@@ -84,8 +85,8 @@ public class GuessGameTest {
     public void should_return_0A0B_when_match_2468_answer_is_1357() {
         RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
         when(randomNumberGenerator.generateAnswer()).thenReturn("1357");
-        GuessGame guessGame = new GuessGame(randomNumberGenerator);
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), randomNumberGenerator);
+        guessGame.startNew();
 
         String tips = guessGame.match("2468");
         assertThat(tips).isEqualTo("0A0B");
@@ -94,7 +95,7 @@ public class GuessGameTest {
 
     @Test
     public void should_return_null_when_validate_1234() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
 
         String errorMessage = guessGame.validate("1234");
         assertThat(errorMessage == null);
@@ -103,14 +104,16 @@ public class GuessGameTest {
 
     @Test
     public void should_return_error_message_when_validate_abcd() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         String errorMessage = guessGame.validate("abcd");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
+
+
     }
 
     @Test
     public void should_return_error_message_when_validate_abc() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         String errorMessage = guessGame.validate("abc");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
@@ -118,7 +121,7 @@ public class GuessGameTest {
 
     @Test
     public void should_return_error_message_when_validate_1() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         String errorMessage = guessGame.validate("1");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
@@ -126,22 +129,22 @@ public class GuessGameTest {
 
     @Test
     public void should_return_error_message_when_validate_null() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         String errorMessage = guessGame.validate(null);
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
     @Test
     public void should_return_error_message_when_validate_1123() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         String errorMessage = guessGame.validate("1123");
         assertThat(errorMessage).isEqualTo(GuessGame.ERROR_MESSAGE);
     }
 
     @Test
     public void should_reduce_the_life_value_when_the_value_is_6() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        guessGame.startNew();
         Integer lifeValue = guessGame.reduceLifeValue();
         assertThat(lifeValue).isEqualTo(5);
     }
@@ -149,9 +152,9 @@ public class GuessGameTest {
     @Test
     public void should_reduce_the_life_value_when_the_value_is_0() throws NoSuchFieldException, IllegalAccessException {
 
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-
-        setPrivateFieldValue(guessGame, "lifeValue", 0);
+        GuessGameContext guessGameContext = mock(GuessGameContext.class);
+        when(guessGameContext.getLifeValue()).thenReturn(0);
+        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
 
         Integer lifeValue = guessGame.reduceLifeValue();
         assertThat(lifeValue).isEqualTo(0);
@@ -160,34 +163,35 @@ public class GuessGameTest {
     @Test
     public void should_start_a_new_game() {
 
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         guessGame.startNew();
 
-        assertThat(guessGame.getLifeValue()).isEqualTo(6);
-        assertThat(guessGame.getStatus()).isEqualTo(StatusEnum.playing);
-        assertThat(guessGame.getAnswer().length()).isEqualTo(4);
-        assertThat(isInteger(guessGame.getAnswer()));
-        assertThat(isNotRepeat(guessGame.getAnswer()));
+        assertThat(guessGame.getGuessGameContext().getLifeValue()).isEqualTo(6);
+        assertThat(guessGame.getGuessGameContext().getStatus()).isEqualTo(StatusEnum.playing);
+        assertThat(guessGame.getGuessGameContext().getAnswer().length()).isEqualTo(4);
+        assertThat(isInteger(guessGame.getGuessGameContext().getAnswer()));
+        assertThat(isNotRepeat(guessGame.getGuessGameContext().getAnswer()));
     }
 
     @Test
     public void should_keep_a_ongoing_game() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
-        setPrivateFieldValue(guessGame, "lifeValue", 4);
-        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
-        setPrivateFieldValue(guessGame, "answer", "1234");
+        GuessGameContext guessGameContext = mock(GuessGameContext.class);
+        when(guessGameContext.getLifeValue()).thenReturn(4);
+        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
+        when(guessGameContext.getAnswer()).thenReturn("1234");
+
+        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
 
         guessGame.startNew();
 
-        assertThat(guessGame.getLifeValue()).isEqualTo(4);
-        assertThat(guessGame.getStatus()).isEqualTo(StatusEnum.playing);
-        assertThat(guessGame.getAnswer()).isEqualTo("1234");
+        assertThat(guessGame.getGuessGameContext().getLifeValue()).isEqualTo(4);
+        assertThat(guessGame.getGuessGameContext().getStatus()).isEqualTo(StatusEnum.playing);
+        assertThat(guessGame.getGuessGameContext().getAnswer()).isEqualTo("1234");
     }
 
     @Test
     public void should_return_error_info() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
         guessGame.startNew();
 
         GameMessage gameMessage = guessGame.calculate("1A23");
@@ -197,12 +201,12 @@ public class GuessGameTest {
 
     @Test
     public void should_return_normal_status() {
+        GuessGameContext guessGameContext = mock(GuessGameContext.class);
+        when(guessGameContext.getLifeValue()).thenReturn(6);
+        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
+        when(guessGameContext.getAnswer()).thenReturn("1234");
 
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
-        setPrivateFieldValue(guessGame, "lifeValue", 6);
-        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
-        setPrivateFieldValue(guessGame, "answer", "1234");
+        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
 
         GameMessage gameMessage = guessGame.calculate("1357");
 
@@ -215,11 +219,12 @@ public class GuessGameTest {
 
     @Test
     public void should_return_failure_status() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
-        setPrivateFieldValue(guessGame, "lifeValue", 1);
-        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
-        setPrivateFieldValue(guessGame, "answer", "1234");
+        GuessGameContext guessGameContext = mock(GuessGameContext.class);
+        when(guessGameContext.getLifeValue()).thenReturn(1);
+        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
+        when(guessGameContext.getAnswer()).thenReturn("1234");
+
+        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
 
         GameMessage gameMessage = guessGame.calculate("1357");
 
@@ -232,11 +237,12 @@ public class GuessGameTest {
 
     @Test
     public void should_return_success_status() {
-        GuessGame guessGame = new GuessGame(new RandomNumberGenerator());
-        guessGame.initialize();
-        setPrivateFieldValue(guessGame, "lifeValue", 1);
-        setPrivateFieldValue(guessGame, "status", StatusEnum.playing);
-        setPrivateFieldValue(guessGame, "answer", "1234");
+        GuessGameContext guessGameContext = mock(GuessGameContext.class);
+        when(guessGameContext.getLifeValue()).thenReturn(1);
+        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
+        when(guessGameContext.getAnswer()).thenReturn("1234");
+
+        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
 
         GameMessage gameMessage = guessGame.calculate("1234");
 
@@ -245,22 +251,6 @@ public class GuessGameTest {
         assertThat(gameMessage.getCalculateResult()).isEqualTo("4A0B");
         assertThat(gameMessage.getErrorMessage()).isEqualTo(GuessGame.GAME_WIN);
 
-    }
-
-
-    private void setPrivateFieldValue(GuessGame guessGame, String fieldName, Object value) {
-        Field privateField = null;
-        try {
-            privateField = GuessGame.class.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        privateField.setAccessible(true);
-        try {
-            privateField.set(guessGame, value);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean isInteger(String str) {

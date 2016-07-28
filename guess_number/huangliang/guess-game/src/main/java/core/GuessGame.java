@@ -16,35 +16,20 @@ public class GuessGame {
     public static final String GAME_WIN = "You are Winner!";
     private static final String ERROR_THE_GAME_IS_STARTED = "The game is ongoing, you can't start a new game";
     private final RandomNumberGenerator randomNumberGenerator;
+    private final GuessGameContext guessGameContext;
 
-    private Integer lifeValue;
-    private StatusEnum status;
-    private String answer;
-
-    public GuessGame(RandomNumberGenerator randomNumberGenerator) {
+    public GuessGame(GuessGameContext guessGameContext, RandomNumberGenerator randomNumberGenerator) {
+        this.guessGameContext = guessGameContext;
         this.randomNumberGenerator = randomNumberGenerator;
     }
 
-    public StatusEnum getStatus() {
-        return status;
-    }
 
-    public Integer getLifeValue() {
-        return lifeValue;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void initialize() {
-
-        lifeValue = 6;
-        status = StatusEnum.playing;
-        answer = randomNumberGenerator.generateAnswer();
+    public GuessGameContext getGuessGameContext() {
+        return guessGameContext;
     }
 
     public String match(String guessValue) {
+        String answer = guessGameContext.getAnswer();
         Map<Character,Boolean> answerMap = new HashMap<Character, Boolean>();
         for (Character c: answer.toCharArray()) {
             answerMap.put(c, true);
@@ -94,16 +79,21 @@ public class GuessGame {
     }
 
     public Integer reduceLifeValue() {
+        Integer lifeValue = guessGameContext.getLifeValue() > 0 ? guessGameContext.getLifeValue() - 1 : 0;
+        guessGameContext.setLifeValue(lifeValue);
 
-        return lifeValue > 0 ? --lifeValue : 0;
+        return lifeValue;
     }
 
     public GameMessage startNew() {
+        StatusEnum status = guessGameContext.getStatus();
+        Integer lifeValue = guessGameContext.getLifeValue() ;
+
         GameMessage gameMessage = new GameMessage();
         gameMessage.setStatusEnum(status);
 
         if(status != StatusEnum.playing) {
-            initialize();
+            guessGameContext.initialize(randomNumberGenerator.generateAnswer());
             gameMessage.setStatusEnum(StatusEnum.playing);
             gameMessage.setLifeValue(lifeValue);
         } else {
@@ -118,19 +108,19 @@ public class GuessGame {
         GameMessage gameMessage = new GameMessage();
         gameMessage.setErrorMessage(validate(guessValue));
         gameMessage.setStatusEnum(StatusEnum.playing);
-        gameMessage.setLifeValue(lifeValue);
+        gameMessage.setLifeValue(guessGameContext.getLifeValue());
 
         if(gameMessage.getErrorMessage() == null) {
             gameMessage.setCalculateResult(match(guessValue));
             gameMessage.setLifeValue(reduceLifeValue());
             if(gameMessage.getCalculateResult().equals("4A0B")) {
                 gameMessage.setStatusEnum(StatusEnum.win);
-                status = StatusEnum.win;
+                guessGameContext.setStatus(StatusEnum.win);
                 gameMessage.setErrorMessage(GAME_WIN);
             }
             else if(gameMessage.getLifeValue() == 0) {
                 gameMessage.setStatusEnum(StatusEnum.failure);
-                status = StatusEnum.failure;
+                guessGameContext.setStatus(StatusEnum.failure);
                 gameMessage.setErrorMessage(ERROR_GAME_OVER);
             }
 
