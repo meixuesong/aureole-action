@@ -15,6 +15,6 @@ public class StartCommand extends Command {
     }
 
     public GameMessage execute(String parameters) {
-        return guessGame.startNew();
+        return guessGame.start();
     }
 }

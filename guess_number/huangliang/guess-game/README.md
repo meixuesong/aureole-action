@@ -1,5 +1,9 @@
 #Change Log
 
+## [2016-8-1] V1.3 release
+#####1. 抽像出Player类，重构testcase
+#####2. Delete CommandEnum
+
 ## [2016-7-28] V1.2 release
 #####1. 抽像出GuessGameContext类，使用Mock重构testcase
 #####2. Delete CommandEnum

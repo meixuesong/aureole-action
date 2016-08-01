@@ -4,14 +4,13 @@ import static org.mockito.Mockito.when;
 
 import core.GameMessage;
 import core.GuessGame;
-import core.GuessGameContext;
+import core.Player;
+import core.NumberMatcher;
 import core.RandomNumberGenerator;
 import core.StatusEnum;
 import org.junit.Test;
 import shell.CommandInvoke;
 import shell.Route;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by lianghuang on 7/20/16.
@@ -20,7 +19,7 @@ public class RouteTest {
     @Test
     public void shoud_start_a_game() {
 
-        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new Player(), new NumberMatcher(), new RandomNumberGenerator());
         CommandInvoke commandInvoke = new CommandInvoke(guessGame);
 
         GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1");
@@ -32,12 +31,13 @@ public class RouteTest {
     @Test
     public void shoud_reduce_life_value_to_5() {
 
-        GuessGameContext guessGameContext = mock(GuessGameContext.class);
-        when(guessGameContext.getLifeValue()).thenReturn(5);
-        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
-        when(guessGameContext.getAnswer()).thenReturn("1234");
+        Player player = mock(Player.class);
+        when(player.getLifeValue()).thenReturn(5);
+        when(player.getStatus()).thenReturn(StatusEnum.playing);
+        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
+        when(randomNumberGenerator.generateAnswer()).thenReturn("1234");
+        GuessGame guessGame = new GuessGame(player, new NumberMatcher(), randomNumberGenerator);
 
-        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
         CommandInvoke commandInvoke = new CommandInvoke(guessGame);
         GameMessage gameMessage = new Route(guessGame, commandInvoke).route(null);
 
@@ -51,12 +51,14 @@ public class RouteTest {
     @Test
     public void shoud_win_the_game() {
 
-        GuessGameContext guessGameContext = mock(GuessGameContext.class);
-        when(guessGameContext.getLifeValue()).thenReturn(5);
-        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
-        when(guessGameContext.getAnswer()).thenReturn("1234");
+        Player player = mock(Player.class);
+        when(player.getLifeValue()).thenReturn(5);
+        when(player.getStatus()).thenReturn(StatusEnum.playing);
+        when(player.reduceLifeValue()).thenReturn(4);
+        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
+        when(randomNumberGenerator.generateAnswer()).thenReturn("1234");
+        GuessGame guessGame = new GuessGame(player, new NumberMatcher(), randomNumberGenerator);
 
-        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
         CommandInvoke commandInvoke = new CommandInvoke(guessGame);
         GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1234");
 
@@ -69,12 +71,13 @@ public class RouteTest {
     @Test
     public void shoud_lose_the_game() {
 
-        GuessGameContext guessGameContext = mock(GuessGameContext.class);
-        when(guessGameContext.getLifeValue()).thenReturn(1);
-        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
-        when(guessGameContext.getAnswer()).thenReturn("1234");
+        Player player = mock(Player.class);
+        when(player.getLifeValue()).thenReturn(1);
+        when(player.getStatus()).thenReturn(StatusEnum.playing);
+        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
+        when(randomNumberGenerator.generateAnswer()).thenReturn("1234");
+        GuessGame guessGame = new GuessGame(player, new NumberMatcher(), randomNumberGenerator);
 
-        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
         CommandInvoke commandInvoke = new CommandInvoke(guessGame);
         GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1357");
 
@@ -83,22 +86,6 @@ public class RouteTest {
         assertThat(gameMessage.getCalculateResult()).isEqualTo("1A1B");
         assertThat(gameMessage.getErrorMessage()).isEqualTo(GuessGame.ERROR_GAME_OVER);
 
-    }
-
-
-    @Test
-    public void shoud_reduce_the_life_value() {
-
-        GuessGameContext guessGameContext = mock(GuessGameContext.class);
-        when(guessGameContext.getLifeValue()).thenReturn(4);
-        when(guessGameContext.getStatus()).thenReturn(StatusEnum.playing);
-        when(guessGameContext.getAnswer()).thenReturn("1234");
-
-        GuessGame guessGame = new GuessGame(guessGameContext, new RandomNumberGenerator());
-        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
-        GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1357");
-
-        assertThat(gameMessage.getLifeValue()).isEqualTo(3);
     }
 
 }

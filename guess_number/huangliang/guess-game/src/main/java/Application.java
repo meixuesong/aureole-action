@@ -1,4 +1,5 @@
-import core.GuessGameContext;
+import core.Player;
+import core.NumberMatcher;
 import core.RandomNumberGenerator;
 import core.GameMessage;
 import core.GuessGame;
@@ -10,10 +11,12 @@ import java.util.Scanner;
  * Created by lianghuang on 7/23/16.
  */
 public class Application {
+
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        GuessGame guessGame = new GuessGame(new GuessGameContext(), new RandomNumberGenerator());
+        GuessGame guessGame = new GuessGame(new Player(),new NumberMatcher(), new RandomNumberGenerator());
         CommandInvoke commandInvoke = new CommandInvoke(guessGame);
         Route route = new Route(guessGame, commandInvoke);
 
@@ -21,11 +24,8 @@ public class Application {
 
         while (true) {
             GameMessage gameMessage = route.route(sc.nextLine());
-
             showResult(gameMessage);
         }
-
-
     }
 
     private static void showResult(GameMessage gameMessage) {

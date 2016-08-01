@@ -3,21 +3,18 @@ package core;
 /**
  * Created by lianghuang on 7/28/16.
  */
-public class GuessGameContext {
+public class Player {
     private Integer lifeValue;
     private StatusEnum status;
-    private String answer;
 
-    public GuessGameContext() {
+    public Player() {
         this.lifeValue = 6;
         this.status = StatusEnum.noStart;
-        this.answer = null;
     }
 
     public void initialize(String answer) {
         this.lifeValue = 6;
         this.status = StatusEnum.playing;
-        this.answer = answer;
     }
 
     public StatusEnum getStatus() {
@@ -28,15 +25,15 @@ public class GuessGameContext {
         return lifeValue;
     }
 
-    public String getAnswer() {
-        return answer;
-    }
-
     public void setLifeValue(Integer lifeValue) {
         this.lifeValue = lifeValue;
     }
 
     public void setStatus(StatusEnum status) {
         this.status = status;
+    }
+
+    public Integer reduceLifeValue() {
+        return lifeValue > 0 ? --this.lifeValue : 0;
     }
 }

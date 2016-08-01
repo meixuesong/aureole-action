@@ -15,6 +15,6 @@ public class GuessCommand extends Command {
     }
 
     public GameMessage execute(String parameters) {
-        return guessGame.calculate(parameters);
+        return guessGame.guess(parameters);
     }
 }

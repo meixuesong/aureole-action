@@ -14,7 +14,7 @@ public class RandomNumberGenerator {
         String result = "";
 
         while(true) {
-            String current = String.valueOf(Math.abs(new Random().nextInt()) % 10);
+            String current = String.valueOf(Math.abs(new Random().nextInt(9)));
             if(!map.containsKey(current)){
                 map.put(current,true);
                 result += current;

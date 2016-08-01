@@ -18,7 +18,6 @@ public class Route {
     }
 
     public GameMessage route(String guessValue) {
-
         Command command = parseCommand(guessValue);
         if(command == null) {
             return  new GameMessage(StatusEnum.unknown,"The parameter can't be parsed! Please check and input again.");
@@ -33,7 +32,7 @@ public class Route {
 
         Command command = null;
 
-        switch (guessGame.getGuessGameContext().getStatus()) {
+        switch (guessGame.getPlayer().getStatus()) {
             case noStart:
             case win:
             case failure:
