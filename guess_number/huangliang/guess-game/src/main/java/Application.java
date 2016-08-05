@@ -28,12 +28,14 @@ public class Application {
         }
     }
 
+    //TODO: put this method to Route class.
     private static void showResult(GameMessage gameMessage) {
 
         if(gameMessage.getErrorMessage() != null) {
             System.out.println("Error: " + gameMessage.getErrorMessage());
         }
 
+        //TODO: put every branch to specifc command
         switch (gameMessage.getStatusEnum()) {
             case noStart:
                 System.out.println("Please input 1 to start a new game or input 2 quit the game:");
@@ -60,6 +62,7 @@ public class Application {
         }
     }
 
+    //TODO: put this method to Route class.
     private static void showMenu() {
         System.out.println("Welcome to guess number game~");
         System.out.println("Please input 1 to start a new game or input 2 quit the game:");

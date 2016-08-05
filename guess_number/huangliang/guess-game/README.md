@@ -1,5 +1,8 @@
 #Change Log
 
+## [2016-8-5] V1.4 release
+#####1. 简化了命令映射
+
 ## [2016-8-1] V1.3 release
 #####1. 抽像出Player类，重构testcase
 #####2. Delete CommandEnum

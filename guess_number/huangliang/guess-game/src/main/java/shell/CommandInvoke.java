@@ -13,26 +13,22 @@ public class CommandInvoke {
 
     private Map<String, Command> commands;
 
+    private GuessCommand guessCommand = null;
+
     public CommandInvoke(GuessGame guessGame) {
         commands = new HashMap<String, Command>();
-        commands.put("start", new StartCommand(guessGame));
-        commands.put("guess", new GuessCommand(guessGame));
-        commands.put("quit", new QuitCommand(guessGame));
+        commands.put("1", new StartCommand(guessGame));
+        commands.put("2", new QuitCommand(guessGame));
+
+        guessCommand = new GuessCommand(guessGame);
     }
 
-    public Command getStartCommand() {
+    public Command getCommand(boolean isStarted, String command) {
 
-        return commands.get("start");
-    }
-
-    public Command getGuessCommand() {
-
-        return commands.get("guess");
-    }
-
-
-    public Command getQuitCommand() {
-
-        return commands.get("quit");
+        if (!isStarted) {
+            return commands.get(command);
+        } else {
+            return  guessCommand;
+        }
     }
 }

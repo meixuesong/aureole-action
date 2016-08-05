@@ -3,6 +3,9 @@ package core;
 /**
  * Created by lianghuang on 7/28/16.
  */
+
+//TODO: If GuessGame instance represent a round game, the status should put to GuessGame class. this class is not
+// necessary.
 public class Player {
     private Integer lifeValue;
     private StatusEnum status;
