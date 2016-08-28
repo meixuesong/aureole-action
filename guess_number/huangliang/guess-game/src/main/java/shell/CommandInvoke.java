@@ -2,6 +2,7 @@ package shell;
 
 import core.GuessGame;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,24 +12,14 @@ import java.util.Map;
  */
 public class CommandInvoke {
 
-    private Map<String, Command> commands;
+    private Map<String, Command> commands = new HashMap<>();
 
-    private GuessCommand guessCommand = null;
-
-    public CommandInvoke(GuessGame guessGame) {
-        commands = new HashMap<String, Command>();
-        commands.put("1", new StartCommand(guessGame));
-        commands.put("2", new QuitCommand(guessGame));
-
-        guessCommand = new GuessCommand(guessGame);
+    public CommandInvoke(GuessGame guessGame, PrintStream out) {
+        commands.put("1", new StartCommand(guessGame, out));
+        commands.put("2", new QuitCommand(guessGame, out));
     }
 
-    public Command getCommand(boolean isStarted, String command) {
-
-        if (!isStarted) {
-            return commands.get(command);
-        } else {
-            return  guessCommand;
-        }
+    public Command getCommand(String command) {
+        return commands.get(command);
     }
 }

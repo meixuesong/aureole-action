@@ -1,91 +1,64 @@
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
-import core.GameMessage;
 import core.GuessGame;
-import core.Player;
 import core.NumberMatcher;
 import core.RandomNumberGenerator;
-import core.StatusEnum;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import shell.CommandInvoke;
 import shell.Route;
+
+import java.io.BufferedReader;
+import java.io.PrintStream;
 
 /**
  * Created by lianghuang on 7/20/16.
  */
 public class RouteTest {
+
+    private RandomNumberGenerator randomNumberGenerator;
+    private GuessGame game;
+    private PrintStream out;
+    private BufferedReader reader;
+    private CommandInvoke commandInvoke;
+    private Route route;
+
+    @Before
+    public void befor() throws Exception {
+        randomNumberGenerator = mock(RandomNumberGenerator.class);
+        out = mock(PrintStream.class);
+        reader = mock(BufferedReader.class);
+        game = new GuessGame(out, reader, new NumberMatcher(), randomNumberGenerator);
+        commandInvoke = new CommandInvoke(game, out);
+        route = new Route(out, game, commandInvoke);
+        given(reader.readLine()).willReturn("1234");
+        given(randomNumberGenerator.generateAnswer()).willReturn("4321");
+    }
+
     @Test
     public void shoud_start_a_game() {
 
-        GuessGame guessGame = new GuessGame(new Player(), new NumberMatcher(), new RandomNumberGenerator());
-        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
+        route.route("1");
 
-        GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1");
-
-        assertThat(gameMessage.getLifeValue()).isEqualTo(6);
-        assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.playing);
-    }
-
-    @Test
-    public void shoud_reduce_life_value_to_5() {
-
-        Player player = mock(Player.class);
-        when(player.getLifeValue()).thenReturn(5);
-        when(player.getStatus()).thenReturn(StatusEnum.playing);
-        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
-        when(randomNumberGenerator.generateAnswer()).thenReturn("1234");
-        GuessGame guessGame = new GuessGame(player, new NumberMatcher(), randomNumberGenerator);
-
-        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
-        GameMessage gameMessage = new Route(guessGame, commandInvoke).route(null);
-
-        assertThat(gameMessage.getLifeValue()).isEqualTo(5);
-        assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.playing);
-        assertThat(gameMessage.getCalculateResult() == null);
-        assertThat(gameMessage.getErrorMessage()).isEqualTo(GuessGame.ERROR_MESSAGE);
+        InOrder inOrder = inOrder(out);
+        inOrder.verify(out).printf("Please input 1 to start a new game or input 2 quit the game:");
+        inOrder.verify(out).println("Welcome");
     }
 
 
     @Test
-    public void shoud_win_the_game() {
+    public void shoud_exit_a_game() {
 
-        Player player = mock(Player.class);
-        when(player.getLifeValue()).thenReturn(5);
-        when(player.getStatus()).thenReturn(StatusEnum.playing);
-        when(player.reduceLifeValue()).thenReturn(4);
-        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
-        when(randomNumberGenerator.generateAnswer()).thenReturn("1234");
-        GuessGame guessGame = new GuessGame(player, new NumberMatcher(), randomNumberGenerator);
+        route.route("2");
 
-        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
-        GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1234");
-
-        assertThat(gameMessage.getLifeValue()).isEqualTo(4);
-        assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.win);
-        assertThat(gameMessage.getCalculateResult()).isEqualTo("4A0B");
+        InOrder inOrder = inOrder(out);
+        inOrder.verify(out).printf("Please input 1 to start a new game or input 2 quit the game:");
+        inOrder.verify(out).println("Good bye!");
     }
 
-
-    @Test
-    public void shoud_lose_the_game() {
-
-        Player player = mock(Player.class);
-        when(player.getLifeValue()).thenReturn(1);
-        when(player.getStatus()).thenReturn(StatusEnum.playing);
-        RandomNumberGenerator randomNumberGenerator = mock(RandomNumberGenerator.class);
-        when(randomNumberGenerator.generateAnswer()).thenReturn("1234");
-        GuessGame guessGame = new GuessGame(player, new NumberMatcher(), randomNumberGenerator);
-
-        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
-        GameMessage gameMessage = new Route(guessGame, commandInvoke).route("1357");
-
-        assertThat(gameMessage.getLifeValue()).isEqualTo(0);
-        assertThat(gameMessage.getStatusEnum()).isEqualTo(StatusEnum.failure);
-        assertThat(gameMessage.getCalculateResult()).isEqualTo("1A1B");
-        assertThat(gameMessage.getErrorMessage()).isEqualTo(GuessGame.ERROR_GAME_OVER);
-
-    }
 
 }

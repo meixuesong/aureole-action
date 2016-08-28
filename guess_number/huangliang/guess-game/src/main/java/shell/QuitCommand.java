@@ -5,19 +5,18 @@ import static java.lang.System.exit;
 import core.GameMessage;
 import core.GuessGame;
 
+import java.io.PrintStream;
+
 /**
  * Created by lianghuang on 7/20/16.
  */
 public class QuitCommand extends Command {
 
-    public final static String CommandName = "quit";
-
-    public QuitCommand(GuessGame guessGame) {
-        super(guessGame);
+    public QuitCommand(GuessGame guessGame, PrintStream out) {
+        super(guessGame, out);
     }
 
-    public GameMessage execute(String parameters) {
-        exit(0);
-        return null;
+    public void execute() {
+        out.println("Good bye!");
     }
 }

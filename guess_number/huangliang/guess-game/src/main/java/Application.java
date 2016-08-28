@@ -1,11 +1,12 @@
-import core.Player;
+import core.GuessGame;
 import core.NumberMatcher;
 import core.RandomNumberGenerator;
-import core.GameMessage;
-import core.GuessGame;
 import shell.CommandInvoke;
 import shell.Route;
-import java.util.Scanner;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Created by lianghuang on 7/23/16.
@@ -14,58 +15,24 @@ public class Application {
 
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
-        GuessGame guessGame = new GuessGame(new Player(),new NumberMatcher(), new RandomNumberGenerator());
-        CommandInvoke commandInvoke = new CommandInvoke(guessGame);
-        Route route = new Route(guessGame, commandInvoke);
+        GuessGame guessGame = new GuessGame(System.out,
+            bufferedReader, new NumberMatcher(), new RandomNumberGenerator());
 
-        showMenu();
+        CommandInvoke commandInvoke = new CommandInvoke(guessGame, System.out);
+        Route route = new Route(System.out, guessGame, commandInvoke);
 
-        while (true) {
-            GameMessage gameMessage = route.route(sc.nextLine());
-            showResult(gameMessage);
+        String input = null;
+        while (!"2".equals(input)) {
+            try {
+                input = bufferedReader.readLine();
+                route.route(input);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    //TODO: put this method to Route class.
-    private static void showResult(GameMessage gameMessage) {
-
-        if(gameMessage.getErrorMessage() != null) {
-            System.out.println("Error: " + gameMessage.getErrorMessage());
-        }
-
-        //TODO: put every branch to specifc command
-        switch (gameMessage.getStatusEnum()) {
-            case noStart:
-                System.out.println("Please input 1 to start a new game or input 2 quit the game:");
-                break;
-            case playing:
-                if(gameMessage.getCalculateResult() != null) {
-                    System.out.println("The guessing result is:" + gameMessage.getCalculateResult());
-                }
-                System.out.println("Your life value is:" + gameMessage.getLifeValue());
-                System.out.println("Please input 4 bit of digits or input 2 quit the game:");
-                break;
-            case win:
-                System.out.println("Congratulation, you got the right number!");
-                System.out.println("Please input 1 to start a new game or input 2 quit the game:");
-                break;
-            case failure:
-                System.out.println("Unfortunately, your life value is extinct! Please try to start a new game.");
-                System.out.println("Please input 1 to start a new game or input 2 quit the game:");
-                break;
-            default:
-                System.out.println("Please input 1 to start a new game or input 2 quit the game:");
-                break;
-
-        }
-    }
-
-    //TODO: put this method to Route class.
-    private static void showMenu() {
-        System.out.println("Welcome to guess number game~");
-        System.out.println("Please input 1 to start a new game or input 2 quit the game:");
-    }
 
 }
