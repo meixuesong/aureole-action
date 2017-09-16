@@ -1,10 +1,3 @@
-pipeline {
-    agent any
-    stages {
-        stage('build') {
-            steps {
-                sh 'mvn --version'
-            }
-        }
-    }
+node {
+	echo "hello, can you see me?"	
 }
